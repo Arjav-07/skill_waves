@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "434057231251",
+    "project_id": "skill-waves",
+    "storage_bucket": "skill-waves.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:434057231251:android:e9667c4c104ae3f8a90666",
+        "android_client_info": {
+          "package_name": "com.example.skill_waves"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwXrxKWADVQ26P1-OmO3nsEkjvGlh6-Lk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
