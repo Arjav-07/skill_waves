@@ -23,8 +23,12 @@ class _LoginPageState extends State<LoginPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Logged in successfully!')),
       );
-      // Navigate to dashboard/home or keep here
+      // Navigate to home or dashboard here
     }
+  }
+
+  void _handleForgotPassword() {
+    Navigator.pushNamed(context, MyRoutes.forgotPasswordRoute);
   }
 
   @override
@@ -60,8 +64,6 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(color: Colors.white70),
                 ),
                 const SizedBox(height: 30),
-
-                // Login Form
                 Card(
                   elevation: 6,
                   shape: RoundedRectangleBorder(
@@ -97,9 +99,17 @@ class _LoginPageState extends State<LoginPage> {
                                     ? 'Please enter your password'
                                     : null,
                           ),
-                          const SizedBox(height: 24),
-
-                          // Login Button
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: _handleForgotPassword,
+                              child: const Text(
+                                'Forgot Password?',
+                                style: TextStyle(color: Colors.indigo),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -127,7 +137,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () {
