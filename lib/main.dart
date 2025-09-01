@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:skill_waves/pages/forgotpassword.dart';
 import 'package:skill_waves/pages/login_page.dart';
 import 'package:skill_waves/pages/signup.dart';
+import 'package:skill_waves/pages/home.dart';
 import 'package:skill_waves/utils/routes.dart';
 import 'package:skill_waves/widget/themes.dart';
 
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
         MyRoutes.loginRoute: (context) => const LoginPage(),
         MyRoutes.SignUpPageRoute: (context) => const SignupPage(),
         MyRoutes.forgotPasswordRoute: (context) => const ForgotPasswordPage(),
+        MyRoutes.homeRoute: (context) => const HomePage(),
         // Add other routes here if needed
       },
     );
