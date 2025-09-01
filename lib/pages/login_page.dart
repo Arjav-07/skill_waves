@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:skill_waves/utils/routes.dart';
 
 class LoginPage extends StatefulWidget {
@@ -15,20 +16,42 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  /// Handle login
   void _handleLogin() async {
     if (_formKey.currentState!.validate()) {
-      setState(() => isLoading = true);
-      await Future.delayed(const Duration(seconds: 2));
-      setState(() => isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Logged in successfully!')),
-      );
-      // Navigate to home or dashboard here
+      try {
+        setState(() => isLoading = true);
+
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        );
+
+        setState(() => isLoading = false);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Logged in successfully!')),
+        );
+
+        // ✅ Navigate to HomePage
+        Navigator.pushReplacementNamed(context, MyRoutes.homeRoute);
+      } on FirebaseAuthException catch (e) {
+        setState(() => isLoading = false);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.message ?? "Login failed")));
+      }
     }
   }
 
+  /// Navigate to Forgot Password
   void _handleForgotPassword() {
     Navigator.pushNamed(context, MyRoutes.forgotPasswordRoute);
+  }
+
+  /// Navigate to SignUp
+  void _handleSignup() {
+    Navigator.pushReplacementNamed(context, MyRoutes.SignUpPageRoute);
   }
 
   @override
@@ -58,12 +81,9 @@ class _LoginPageState extends State<LoginPage> {
                     color: Colors.white,
                   ),
                 ),
-                const SizedBox(height: 8),
-                const Text(
-                  "Log in to your learning account",
-                  style: TextStyle(color: Colors.white70),
-                ),
                 const SizedBox(height: 30),
+
+                // Login Card
                 Card(
                   elevation: 6,
                   shape: RoundedRectangleBorder(
@@ -77,14 +97,14 @@ class _LoginPageState extends State<LoginPage> {
                         children: [
                           TextFormField(
                             controller: emailController,
+                            keyboardType: TextInputType.emailAddress,
                             decoration: const InputDecoration(
                               prefixIcon: Icon(Icons.email_outlined),
                               labelText: "Email",
                             ),
-                            validator: (value) =>
-                                value == null || value.isEmpty
-                                    ? 'Please enter your email'
-                                    : null,
+                            validator: (value) => value == null || value.isEmpty
+                                ? 'Please enter your email'
+                                : null,
                           ),
                           const SizedBox(height: 16),
                           TextFormField(
@@ -94,11 +114,12 @@ class _LoginPageState extends State<LoginPage> {
                               prefixIcon: Icon(Icons.lock_outline),
                               labelText: "Password",
                             ),
-                            validator: (value) =>
-                                value == null || value.isEmpty
-                                    ? 'Please enter your password'
-                                    : null,
+                            validator: (value) => value == null || value.isEmpty
+                                ? 'Please enter your password'
+                                : null,
                           ),
+
+                          // Forgot password link
                           Align(
                             alignment: Alignment.centerRight,
                             child: TextButton(
@@ -110,13 +131,16 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           const SizedBox(height: 8),
+
+                          // Login button
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: isLoading ? null : _handleLogin,
                               style: ElevatedButton.styleFrom(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 backgroundColor: Colors.indigo,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -138,16 +162,15 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 16),
+
+                // Sign up link
                 TextButton(
-                  onPressed: () {
-                    Navigator.pushReplacementNamed(
-                        context, MyRoutes.SignUpPageRoute);
-                  },
+                  onPressed: _handleSignup,
                   child: const Text(
                     "Don't have an account? Sign up",
                     style: TextStyle(color: Colors.white),
                   ),
-                )
+                ),
               ],
             ),
           ),
