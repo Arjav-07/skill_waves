@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:skill_waves/utils/routes.dart';
 
 class SignupPage extends StatefulWidget {
@@ -18,18 +19,27 @@ class _SignupPageState extends State<SignupPage> {
 
   void _handleSignup() async {
     if (_formKey.currentState!.validate()) {
-      setState(() => isLoading = true);
+      try {
+        setState(() => isLoading = true);
 
-      await Future.delayed(const Duration(seconds: 2));
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        );
 
-      setState(() => isLoading = false);
+        setState(() => isLoading = false);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Account created successfully!')),
-      );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Account created successfully!')),
+        );
 
-      // Optionally navigate to login or home page after signup
-      // Navigator.pushReplacementNamed(context, MyRoutes.loginRoute);
+        Navigator.pushReplacementNamed(context, MyRoutes.loginRoute);
+      } on FirebaseAuthException catch (e) {
+        setState(() => isLoading = false);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.message ?? "Signup failed")));
+      }
     }
   }
 
@@ -60,14 +70,7 @@ class _SignupPageState extends State<SignupPage> {
                     color: Colors.white,
                   ),
                 ),
-                const SizedBox(height: 8),
-                const Text(
-                  "Sign up to get started",
-                  style: TextStyle(color: Colors.white70),
-                ),
                 const SizedBox(height: 30),
-
-                // Signup Form
                 Card(
                   elevation: 6,
                   shape: RoundedRectangleBorder(
@@ -79,7 +82,6 @@ class _SignupPageState extends State<SignupPage> {
                       key: _formKey,
                       child: Column(
                         children: [
-                          // Full Name
                           TextFormField(
                             controller: nameController,
                             decoration: const InputDecoration(
@@ -91,8 +93,6 @@ class _SignupPageState extends State<SignupPage> {
                                 : null,
                           ),
                           const SizedBox(height: 16),
-
-                          // Email
                           TextFormField(
                             controller: emailController,
                             decoration: const InputDecoration(
@@ -104,8 +104,6 @@ class _SignupPageState extends State<SignupPage> {
                                 : null,
                           ),
                           const SizedBox(height: 16),
-
-                          // Password
                           TextFormField(
                             controller: passwordController,
                             obscureText: true,
@@ -123,15 +121,14 @@ class _SignupPageState extends State<SignupPage> {
                             },
                           ),
                           const SizedBox(height: 24),
-
-                          // Signup Button
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: isLoading ? null : _handleSignup,
                               style: ElevatedButton.styleFrom(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 backgroundColor: Colors.indigo,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -152,18 +149,19 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () {
                     Navigator.pushReplacementNamed(
-                        context, MyRoutes.loginRoute);
+                      context,
+                      MyRoutes.loginRoute,
+                    );
                   },
                   child: const Text(
                     "Already have an account? Login",
                     style: TextStyle(color: Colors.white),
                   ),
-                )
+                ),
               ],
             ),
           ),
