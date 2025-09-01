@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "561860638892",
+    "project_id": "skill-waves-49184",
+    "storage_bucket": "skill-waves-49184.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:561860638892:android:f8b359b1239557ccc5c709",
+        "android_client_info": {
+          "package_name": "com.example.skill_waves"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "561860638892-88ufr3ncfk43mma0ghn0g4pi2qiurvhl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7P0CNq_H7J4R_I9SYEX50J1K146FzJcQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "561860638892-88ufr3ncfk43mma0ghn0g4pi2qiurvhl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "561860638892-f8r0h1qmrdtj14mnbs679ntl908l1670.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.skillWaves"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
