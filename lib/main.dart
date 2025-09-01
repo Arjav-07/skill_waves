@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 import 'package:skill_waves/pages/login_page.dart';
-import 'package:skill_waves/pages/signup.dart';
+import 'package:skill_waves/pages/signup.dart' hide login_page;
 import 'package:skill_waves/pages/forgotpassword.dart';
 import 'package:skill_waves/pages/home.dart';
 import 'package:skill_waves/utils/routes.dart';
