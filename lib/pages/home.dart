@@ -9,15 +9,22 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   int _selectedIndex = 0;
   final user = FirebaseAuth.instance.currentUser;
 
   final List<Widget> _pages = [
-    const Center(child: Text("Home Page", style: TextStyle(fontSize: 20))),
-    const Center(child: Text("Profile Page", style: TextStyle(fontSize: 20))),
-    const Center(child: Text("Settings Page", style: TextStyle(fontSize: 20))),
+    const Center(child: Text("Dashboard Page", style: TextStyle(fontSize: 20))),
+    const Center(child: Text("Inbox Page", style: TextStyle(fontSize: 20))),
     const Center(child: Text("Wallet Page", style: TextStyle(fontSize: 20))),
+    const Center(child: Text("Settings Page", style: TextStyle(fontSize: 20))),
+  ];
+
+  final List<Map<String, dynamic>> _navItems = [
+    {"icon": Icons.dashboard, "label": "Dashboard"},
+    {"icon": Icons.inbox, "label": "Inbox"},
+    {"icon": Icons.account_balance_wallet, "label": "Wallet"},
+    {"icon": Icons.settings, "label": "Settings"},
   ];
 
   void _onNavItemTapped(int index) {
@@ -26,24 +33,75 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Widget _buildNavItem(IconData icon, int index) {
-    return IconButton(
-      icon: Icon(
-        icon,
-        size: 28,
-        color: _selectedIndex == index ? Colors.teal : Colors.grey[400],
+  Widget _buildNavItem(int index) {
+    bool isSelected = _selectedIndex == index;
+    var item = _navItems[index];
+
+    return GestureDetector(
+      onTap: () => _onNavItemTapped(index),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: isSelected
+            ? BoxDecoration(
+                color: Colors.deepPurple[100],
+                borderRadius: BorderRadius.circular(30),
+              )
+            : null,
+        child: Row(
+          children: [
+            Icon(
+              item['icon'],
+              size: 24,
+              color: isSelected ? Colors.deepPurple : Colors.grey[400],
+            ),
+            if (isSelected) ...[
+              const SizedBox(width: 8),
+              Text(
+                item['label'],
+                style: TextStyle(
+                  color: Colors.deepPurple,
+                  fontWeight: FontWeight.w600,
+                ),
+              )
+            ],
+          ],
+        ),
       ),
-      onPressed: () => _onNavItemTapped(index),
+    );
+  }
+
+  // Custom page transition widget
+  Widget _animatedPage(Widget child, int index) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 400),
+      transitionBuilder: (child, animation) {
+        final inAnimation = Tween<Offset>(
+                begin: Offset(index > _selectedIndex ? 1 : -1, 0), end: Offset.zero)
+            .animate(animation);
+        final fade = Tween<double>(begin: 0, end: 1).animate(animation);
+
+        return SlideTransition(
+          position: inAnimation,
+          child: FadeTransition(opacity: fade, child: child),
+        );
+      },
+      child: SizedBox(
+        key: ValueKey<int>(_selectedIndex),
+        width: double.infinity,
+        height: double.infinity,
+        child: child,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, // Allows FAB to float above the bottom app bar
+      extendBody: true,
       appBar: AppBar(
         title: const Text("Skill Waves - LearnStream"),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.deepPurple,
       ),
       drawer: Drawer(
         child: Column(
@@ -66,38 +124,18 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text("Home"),
-              onTap: () {
-                Navigator.pop(context);
-                _onNavItemTapped(0);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text("Profile"),
-              onTap: () {
-                Navigator.pop(context);
-                _onNavItemTapped(1);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text("Settings"),
-              onTap: () {
-                Navigator.pop(context);
-                _onNavItemTapped(2);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.account_balance_wallet),
-              title: const Text("Wallet"),
-              onTap: () {
-                Navigator.pop(context);
-                _onNavItemTapped(3);
-              },
-            ),
+            ..._navItems.asMap().entries.map((entry) {
+              int idx = entry.key;
+              var item = entry.value;
+              return ListTile(
+                leading: Icon(item['icon']),
+                title: Text(item['label']),
+                onTap: () {
+                  Navigator.pop(context);
+                  _onNavItemTapped(idx);
+                },
+              );
+            }).toList(),
             const Spacer(),
             Divider(),
             ListTile(
@@ -111,33 +149,24 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: _pages[_selectedIndex],
-
-      // Floating curved nav bar
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _onNavItemTapped(3), // Wallet Page
-        backgroundColor: Colors.teal,
-        child: const Icon(Icons.attach_money, size: 28),
-        elevation: 4,
-      ),
-      bottomNavigationBar: BottomAppBar(
-        shape: const CircularNotchedRectangle(), // Creates notch for FAB
-        notchMargin: 6,
-        color: Colors.white,
-        elevation: 10,
-        child: SizedBox(
-          height: 60,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(Icons.home, 0),
-              _buildNavItem(Icons.person, 1),
-              const SizedBox(width: 48), // Space for FAB
-              _buildNavItem(Icons.settings, 2),
-              _buildNavItem(Icons.list, 3), // Optional extra icon
-            ],
-          ),
+      body: _animatedPage(_pages[_selectedIndex], _selectedIndex),
+      bottomNavigationBar: Container(
+        margin: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 10,
+              spreadRadius: 2,
+            )
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: List.generate(_navItems.length, (index) => _buildNavItem(index)),
         ),
       ),
     );
