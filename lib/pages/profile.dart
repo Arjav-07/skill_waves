@@ -1,33 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:skill_waves/pages/setting.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:skill_waves/widget/app_drawer.dart';
+import 'package:skill_waves/utils/routes.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
+  Future<void> _logout(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    if (context.mounted) {
+      Navigator.pushReplacementNamed(context, MyRoutes.loginRoute);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       backgroundColor: const Color(0xFF0F0F23),
+      drawer: const AppDrawer(),
       body: SafeArea(
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.all(20),
               child: Row(
-                children: const [
-                  CircleAvatar(
+                children: [
+                  const CircleAvatar(
                     radius: 40,
-                    backgroundImage: NetworkImage(
-                        'https://i.pravatar.cc/150?img=3'), // sample profile
+                    backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=3'),
                   ),
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Arjav Bhisara',
-                          style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 4),
-                      Text('arjav@example.com', style: TextStyle(color: Colors.white54)),
+                      Text(
+                        user?.displayName ?? 'User',
+                        style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(user?.email ?? 'user@example.com', style: const TextStyle(color: Colors.white54)),
                     ],
                   ),
                 ],
@@ -38,35 +51,15 @@ class ProfilePage extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 children: [
-                  _buildProfileItem(
+                  _profileItem(
                     icon: Icons.settings,
                     title: 'Settings',
                     subtitle: 'Manage your account settings',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const SettingsPage()),
-                      );
-                    },
+                    onTap: () => Navigator.pushNamed(context, MyRoutes.settingsRoute),
                   ),
-                  _buildProfileItem(
-                    icon: Icons.history,
-                    title: 'Activity',
-                    subtitle: 'View your recent activities',
-                    onTap: () {},
-                  ),
-                  _buildProfileItem(
-                    icon: Icons.help_outline,
-                    title: 'Help & Support',
-                    subtitle: 'Get assistance',
-                    onTap: () {},
-                  ),
-                  _buildProfileItem(
-                    icon: Icons.logout,
-                    title: 'Logout',
-                    subtitle: 'Sign out of your account',
-                    onTap: () {},
-                  ),
+                  _profileItem(icon: Icons.history, title: 'Activity', subtitle: 'View your recent activities', onTap: () {}),
+                  _profileItem(icon: Icons.help_outline, title: 'Help & Support', subtitle: 'Get assistance', onTap: () {}),
+                  _profileItem(icon: Icons.logout, title: 'Logout', subtitle: 'Sign out of your account', onTap: () => _logout(context)),
                 ],
               ),
             ),
@@ -76,7 +69,7 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileItem({
+  Widget _profileItem({
     required IconData icon,
     required String title,
     required String subtitle,
@@ -97,15 +90,11 @@ class ProfilePage extends StatelessWidget {
             Icon(icon, color: Colors.white70),
             const SizedBox(width: 16),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title,
-                      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 4),
-                  Text(subtitle, style: const TextStyle(color: Colors.white54, fontSize: 14)),
-                ],
-              ),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(title, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                Text(subtitle, style: const TextStyle(color: Colors.white54, fontSize: 14)),
+              ]),
             ),
             const Icon(Icons.arrow_forward_ios, color: Colors.white38, size: 16),
           ],

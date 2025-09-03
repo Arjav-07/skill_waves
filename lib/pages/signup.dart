@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:skill_waves/utils/routes.dart';
 import 'package:intl/intl.dart';
+import 'package:skill_waves/utils/routes.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -18,6 +18,7 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController dobController = TextEditingController();
 
   bool isLoading = false;
+  bool obscure = true;
 
   Future<void> _signup() async {
     if (firstNameController.text.trim().isEmpty ||
@@ -33,14 +34,18 @@ class _SignupPageState extends State<SignupPage> {
 
     try {
       setState(() => isLoading = true);
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final cred = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
-      setState(() => isLoading = false);
 
+      await cred.user?.updateDisplayName("${firstNameController.text.trim()} ${lastNameController.text.trim()}");
+
+      if (!mounted) return;
+      setState(() => isLoading = false);
       Navigator.pushReplacementNamed(context, MyRoutes.homeRoute);
     } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
       setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message ?? "Signup failed")),
@@ -57,6 +62,7 @@ class _SignupPageState extends State<SignupPage> {
     );
     if (picked != null) {
       dobController.text = DateFormat('dd/MM/yyyy').format(picked);
+      setState(() {});
     }
   }
 
@@ -67,26 +73,39 @@ class _SignupPageState extends State<SignupPage> {
     bool obscureText = false,
     bool readOnly = false,
     VoidCallback? onTap,
+    Widget? trailing,
+    TextInputType? keyboardType,
   }) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.9),
         borderRadius: BorderRadius.circular(12),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4)),
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
       ),
-      child: TextField(
-        controller: controller,
-        obscureText: obscureText,
-        readOnly: readOnly,
-        onTap: onTap,
-        decoration: InputDecoration(
-          prefixIcon: icon != null ? Icon(icon) : null,
-          labelText: label,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.fromLTRB(20, 20, 16, 20),
-        ),
+      child: Row(
+        children: [
+          if (icon != null) ...[
+            const SizedBox(width: 12),
+            Icon(icon, color: Colors.black87),
+            const SizedBox(width: 8),
+          ],
+          Expanded(
+            child: TextField(
+              controller: controller,
+              obscureText: obscureText,
+              readOnly: readOnly,
+              onTap: onTap,
+              keyboardType: keyboardType,
+              decoration: InputDecoration(
+                labelText: label,
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.fromLTRB(8, 18, 8, 18),
+              ),
+            ),
+          ),
+          if (trailing != null) trailing,
+          const SizedBox(width: 12),
+        ],
       ),
     );
   }
@@ -112,15 +131,10 @@ class _SignupPageState extends State<SignupPage> {
                 const SizedBox(height: 16),
                 const Text(
                   "Create Account",
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 const SizedBox(height: 40),
 
-                // First Name & Last Name Row
                 Row(
                   children: [
                     Expanded(
@@ -142,7 +156,6 @@ class _SignupPageState extends State<SignupPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // Date of Birth
                 _buildTextField(
                   controller: dobController,
                   label: "Date of Birth",
@@ -152,24 +165,26 @@ class _SignupPageState extends State<SignupPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // Email
                 _buildTextField(
                   controller: emailController,
                   label: "Email",
                   icon: Icons.email_outlined,
+                  keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 16),
 
-                // Password
                 _buildTextField(
                   controller: passwordController,
                   label: "Password",
                   icon: Icons.lock_outline,
-                  obscureText: true,
+                  obscureText: obscure,
+                  trailing: IconButton(
+                    onPressed: () => setState(() => obscure = !obscure),
+                    icon: Icon(obscure ? Icons.visibility_off : Icons.visibility),
+                  ),
                 ),
                 const SizedBox(height: 24),
 
-                // Sign Up Button
                 SizedBox(
                   width: double.infinity,
                   height: 50,
@@ -178,32 +193,18 @@ class _SignupPageState extends State<SignupPage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.teal,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     child: isLoading
                         ? const CircularProgressIndicator(color: Colors.teal)
-                        : const Text(
-                            "Sign Up",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                        : const Text("Sign Up", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   ),
                 ),
                 const SizedBox(height: 16),
 
-                // Already have an account → Login
                 TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, MyRoutes.loginRoute);
-                  },
-                  child: const Text(
-                    "Already have an account? Login",
-                    style: TextStyle(color: Colors.white70),
-                  ),
+                  onPressed: () => Navigator.pushNamed(context, MyRoutes.loginRoute),
+                  child: const Text("Already have an account? Login", style: TextStyle(color: Colors.white70)),
                 ),
               ],
             ),

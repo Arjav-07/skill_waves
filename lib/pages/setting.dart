@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:skill_waves/widget/app_drawer.dart';
+import 'package:skill_waves/utils/routes.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -10,8 +12,15 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool _notifications = true;
-  bool _darkMode = true;
+  bool _darkMode = true; // requires app-wide state mgmt to truly toggle
   bool _location = false;
+
+  Future<void> _logout() async {
+    await FirebaseAuth.instance.signOut();
+    if (context.mounted) {
+      Navigator.pushReplacementNamed(context, MyRoutes.loginRoute);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,83 +35,35 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSectionTitle('Account'),
-            const SizedBox(height: 12),
-            _buildCardItem(
-              icon: Icons.person,
-              title: 'Profile',
-              subtitle: 'Update your profile information',
-              onTap: () {},
-            ),
-            _buildCardItem(
-              icon: Icons.lock,
-              title: 'Change Password',
-              subtitle: 'Update your account password',
-              onTap: () {},
-            ),
-            const SizedBox(height: 24),
-            _buildSectionTitle('Preferences'),
-            const SizedBox(height: 12),
-            _buildSwitchItem(
-              icon: Icons.notifications,
-              title: 'Notifications',
-              value: _notifications,
-              onChanged: (val) {
-                setState(() => _notifications = val);
-              },
-            ),
-            _buildSwitchItem(
-              icon: Icons.dark_mode,
-              title: 'Dark Mode',
-              value: _darkMode,
-              onChanged: (val) {
-                setState(() => _darkMode = val);
-              },
-            ),
-            _buildSwitchItem(
-              icon: Icons.location_on,
-              title: 'Location Services',
-              value: _location,
-              onChanged: (val) {
-                setState(() => _location = val);
-              },
-            ),
-            const SizedBox(height: 24),
-            _buildSectionTitle('More'),
-            const SizedBox(height: 12),
-            _buildCardItem(
-              icon: Icons.help_outline,
-              title: 'Help & Support',
-              subtitle: 'Get assistance and FAQs',
-              onTap: () {},
-            ),
-            _buildCardItem(
-              icon: Icons.logout,
-              title: 'Logout',
-              subtitle: 'Sign out of your account',
-              onTap: () {},
-            ),
-          ],
-        ),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          _section('Account'),
+          const SizedBox(height: 12),
+          _cardItem(icon: Icons.person, title: 'Profile', subtitle: 'Update your profile information', onTap: () {}),
+          _cardItem(
+            icon: Icons.lock,
+            title: 'Change Password',
+            subtitle: 'Update your account password',
+            onTap: () => Navigator.pushNamed(context, MyRoutes.forgotPasswordRoute),
+          ),
+          const SizedBox(height: 24),
+          _section('Preferences'),
+          const SizedBox(height: 12),
+          _switchItem(icon: Icons.notifications, title: 'Notifications', value: _notifications, onChanged: (v) => setState(() => _notifications = v)),
+          _switchItem(icon: Icons.dark_mode, title: 'Dark Mode', value: _darkMode, onChanged: (v) => setState(() => _darkMode = v)),
+          _switchItem(icon: Icons.location_on, title: 'Location Services', value: _location, onChanged: (v) => setState(() => _location = v)),
+          const SizedBox(height: 24),
+          _section('More'),
+          const SizedBox(height: 12),
+          _cardItem(icon: Icons.help_outline, title: 'Help & Support', subtitle: 'Get assistance and FAQs', onTap: () {}),
+          _cardItem(icon: Icons.logout, title: 'Logout', subtitle: 'Sign out of your account', onTap: _logout),
+        ]),
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        color: Colors.white70,
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-      ),
-    );
-  }
+  Widget _section(String title) => Text(title, style: const TextStyle(color: Colors.white70, fontSize: 18, fontWeight: FontWeight.bold));
 
-  Widget _buildCardItem({
+  Widget _cardItem({
     required IconData icon,
     required String title,
     required String subtitle,
@@ -123,14 +84,11 @@ class _SettingsPageState extends State<SettingsPage> {
             Icon(icon, color: Colors.white70),
             const SizedBox(width: 16),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 4),
-                  Text(subtitle, style: const TextStyle(color: Colors.white54, fontSize: 14)),
-                ],
-              ),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(title, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                Text(subtitle, style: const TextStyle(color: Colors.white54, fontSize: 14)),
+              ]),
             ),
             const Icon(Icons.arrow_forward_ios, color: Colors.white38, size: 16),
           ],
@@ -139,7 +97,7 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _buildSwitchItem({
+  Widget _switchItem({
     required IconData icon,
     required String title,
     required bool value,
@@ -157,9 +115,7 @@ class _SettingsPageState extends State<SettingsPage> {
         children: [
           Icon(icon, color: Colors.white70),
           const SizedBox(width: 16),
-          Expanded(
-            child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
+          Expanded(child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold))),
           Switch(
             value: value,
             onChanged: onChanged,
