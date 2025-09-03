@@ -54,11 +54,19 @@ class _SkillPageState extends State<SkillPage> with TickerProviderStateMixin {
     return Scaffold(
       backgroundColor: const Color(0xFF0F0F23),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text("Upgrade Skills"),
+        backgroundColor: Colors.deepPurple.withOpacity(0.4),
+        elevation: 4,
+        title: const Text(
+          "SKILL WAVES",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         centerTitle: true,
       ),
+      drawer: const AppDrawer(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: 90),
         child: Column(
@@ -79,21 +87,26 @@ class _SkillPageState extends State<SkillPage> with TickerProviderStateMixin {
       padding: const EdgeInsets.all(20),
       child: SlideTransition(
         position: _slideAnimation,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text(
-              "Upgrade Your Skills",
-              style: TextStyle(
-                  color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            Text(
-              "Explore courses, learn new skills, and boost your career",
-              style: TextStyle(color: Colors.white70, fontSize: 16),
-            ),
-            SizedBox(height: 24),
-          ],
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text(
+                "Upgrade Your Skills",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8),
+              Text(
+                "Explore courses, learn new skills, and boost your career",
+                style: TextStyle(color: Colors.white70, fontSize: 16),
+              ),
+              SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );
@@ -113,7 +126,10 @@ class _SkillPageState extends State<SkillPage> with TickerProviderStateMixin {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text("Categories",
-              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           GridView.count(
             physics: const NeverScrollableScrollPhysics(),
@@ -124,14 +140,15 @@ class _SkillPageState extends State<SkillPage> with TickerProviderStateMixin {
             children: categories.map((cat) {
               return Container(
                 decoration: BoxDecoration(
-                  color: Colors.deepPurple[50],
+                  color: Colors.deepPurple.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(cat['icon'] as IconData, size: 40, color: Colors.deepPurple),
+                    Icon(cat['icon'] as IconData,
+                        size: 40, color: Colors.deepPurpleAccent),
                     const SizedBox(height: 12),
                     Text(cat['title'] as String,
                         style: const TextStyle(
@@ -154,7 +171,10 @@ class _SkillPageState extends State<SkillPage> with TickerProviderStateMixin {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text("Top Courses",
-              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           SizedBox(
             height: 180,
@@ -182,10 +202,13 @@ class _SkillPageState extends State<SkillPage> with TickerProviderStateMixin {
                     children: [
                       Text("Course ${index + 1}",
                           style: const TextStyle(
-                              color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold)),
                       const Spacer(),
                       Text("Learn something new today!",
-                          style: TextStyle(color: Colors.white.withOpacity(0.9))),
+                          style: TextStyle(
+                              color: Colors.white.withOpacity(0.9))),
                     ],
                   ),
                 );
@@ -205,7 +228,10 @@ class _SkillPageState extends State<SkillPage> with TickerProviderStateMixin {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text("Recently Learned",
-              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Column(
             children: List.generate(3, (index) {
@@ -226,20 +252,44 @@ class _SkillPageState extends State<SkillPage> with TickerProviderStateMixin {
                         color: Colors.deepPurple.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.check, color: Colors.white, size: 20),
+                      child: const Icon(Icons.check,
+                          color: Colors.white, size: 20),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text("Lesson ${index + 1}",
-                          style: const TextStyle(color: Colors.white, fontSize: 14)),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 14)),
                     ),
-                    const Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16),
+                    const Icon(Icons.arrow_forward_ios,
+                        color: Colors.white54, size: 16),
                   ],
                 ),
               );
             }),
           ),
           const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+}
+
+// Dummy drawer
+class AppDrawer extends StatelessWidget {
+  const AppDrawer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        children: const [
+          DrawerHeader(
+            decoration: BoxDecoration(color: Colors.deepPurple),
+            child: Text("Menu", style: TextStyle(color: Colors.white)),
+          ),
+          ListTile(title: Text("Home")),
+          ListTile(title: Text("Profile")),
         ],
       ),
     );

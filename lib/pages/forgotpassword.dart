@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:skill_waves/utils/routes.dart'; // make sure your login route is defined here
+import 'package:skill_waves/utils/routes.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -68,10 +68,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // ✅ Same gradient theme as LoginPage
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF00BFA6), Color(0xFF1DE9B6)],
+            colors: [Color(0xFF6366F1), Color(0xFF4F46E5)], // purple-indigo
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -116,13 +117,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     onPressed: isLoading ? null : _resetPassword,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
-                      foregroundColor: Colors.teal,
+                      foregroundColor: const Color(0xFF4F46E5), // indigo accent
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: isLoading
-                        ? const CircularProgressIndicator(color: Colors.teal)
+                        ? const CircularProgressIndicator(color: Color(0xFF4F46E5))
                         : const Text(
                             "Send Reset Link",
                             style: TextStyle(

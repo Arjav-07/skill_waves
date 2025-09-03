@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skill_waves/widget/app_drawer.dart'; // ✅ Import your drawer widget
 
 class InternshipPage extends StatefulWidget {
   const InternshipPage({Key? key}) : super(key: key);
@@ -7,7 +8,8 @@ class InternshipPage extends StatefulWidget {
   State<InternshipPage> createState() => _InternshipPageState();
 }
 
-class _InternshipPageState extends State<InternshipPage> with TickerProviderStateMixin {
+class _InternshipPageState extends State<InternshipPage>
+    with TickerProviderStateMixin {
   late AnimationController _fadeController;
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
@@ -54,10 +56,22 @@ class _InternshipPageState extends State<InternshipPage> with TickerProviderStat
     return Scaffold(
       backgroundColor: const Color(0xFF0F0F23),
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
-        title: const Text("Find Internships"),
+        backgroundColor: Colors.deepPurple.withOpacity(0.4),
+        elevation: 4,
+        title: const Text(
+          "SKILL WAVES",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         centerTitle: true,
       ),
+
+      // ✅ Drawer same as HomePage
+      drawer: const AppDrawer(),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: 90),
         child: Column(
@@ -213,7 +227,9 @@ class _InternshipPageState extends State<InternshipPage> with TickerProviderStat
                 children: [
                   Text(title,
                       style: const TextStyle(
-                          color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500)),
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500)),
                   const SizedBox(height: 4),
                   Text("$company • $location • $time",
                       style: const TextStyle(color: Colors.white54, fontSize: 12)),

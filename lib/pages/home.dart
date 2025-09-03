@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:skill_waves/pages/internship.dart';
 import 'package:skill_waves/pages/skills.dart';
 import 'package:skill_waves/pages/profile.dart';
-import 'package:skill_waves/widget/app_drawer.dart';
+import 'package:skill_waves/widget/app_drawer.dart' hide AppDrawer;
 import 'package:skill_waves/widget/nav_bar.dart';
 
 class HomePage extends StatefulWidget {
