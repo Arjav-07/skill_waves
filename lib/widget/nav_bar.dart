@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -33,7 +32,6 @@ class _NavBarState extends State<NavBar> with TickerProviderStateMixin {
       CurvedAnimation(parent: _navController, curve: Curves.elasticOut),
     );
 
-    // Delay the nav bar animation
     Future.delayed(const Duration(milliseconds: 800), () {
       _navController.forward();
     });
@@ -48,72 +46,99 @@ class _NavBarState extends State<NavBar> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final navItems = [
-      {'icon': Icons.home_rounded, 'label': 'Home'},
-      {'icon': Icons.work_outline_rounded, 'label': 'Internships'},
-      {'icon': Icons.psychology_rounded, 'label': 'Skills'},
-      {'icon': Icons.chat_bubble_outline_rounded, 'label': 'Chat'},
-      {'icon': Icons.person_outline_rounded, 'label': 'Profile'},
+      {'icon': Icons.home_rounded, 'label': 'Home'},          // index 0
+      {'icon': Icons.work_outline_rounded, 'label': 'Internships'}, // index 1
+      {'icon': Icons.psychology_rounded, 'label': 'Skills'},  // index 2
+      {'icon': Icons.person_outline_rounded, 'label': 'Profile'},   // index 3
     ];
 
-    return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(0, 1),
-        end: Offset.zero,
-      ).animate(
-        CurvedAnimation(parent: _navController, curve: Curves.easeOutBack),
-      ),
-      child: ScaleTransition(
-        scale: _navAnimation,
-        child: Container(
-          height: 70,
-          decoration: BoxDecoration(
-            color: const Color(0xFF1A1A2E).withOpacity(0.9),
-            borderRadius: BorderRadius.circular(40),
-            border: Border.all(
-              color: const Color(0xFF2D2D42).withOpacity(0.5),
-              width: 0.5,
+    return Stack(
+      children: [
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 1),
+              end: Offset.zero,
+            ).animate(
+              CurvedAnimation(parent: _navController, curve: Curves.easeOutBack),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.6),
-                blurRadius: 25,
-                offset: const Offset(0, 10),
-              ),
-              BoxShadow(
-                color: const Color(0xFF6366F1).withOpacity(0.1),
-                blurRadius: 15,
-                offset: const Offset(0, 5),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: navItems.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final item = entry.value;
-                    final isActive = widget.currentIndex == index;
-                    
-                    return _buildNavItem(
-                      icon: item['icon'] as IconData,
-                      label: item['label'] as String,
-                      isActive: isActive,
-                      onTap: () {
-                        widget.onItemTapped(index);
-                        _navController.forward(from: 0.9);
-                        HapticFeedback.lightImpact();
-                      },
-                    );
-                  }).toList(),
+            child: ScaleTransition(
+              scale: _navAnimation,
+              child: Container(
+                height: 64,
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1A1A2E).withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(40),
+                  border: Border.all(
+                    color: const Color(0xFF2D2D42).withOpacity(0.5),
+                    width: 0.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.6),
+                      blurRadius: 25,
+                      offset: const Offset(0, 10),
+                    ),
+                    BoxShadow(
+                      color: const Color(0xFF6366F1).withOpacity(0.1),
+                      blurRadius: 15,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: navItems.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final item = entry.value;
+                        final isActive = widget.currentIndex == index;
+
+                        return _buildNavItem(
+                          icon: item['icon'] as IconData,
+                          label: item['label'] as String,
+                          isActive: isActive,
+                          onTap: () {
+                            widget.onItemTapped(index);
+                            _navController.forward(from: 0.9);
+                            HapticFeedback.lightImpact();
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
         ),
-      );
+
+        // Floating Chat Button
+        Positioned(
+          bottom: 76,
+          right: 20,
+          child: FloatingActionButton(
+            backgroundColor: const Color(0xFF6366F1),
+            elevation: 6,
+            shape: const CircleBorder(),
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              Navigator.pushNamed(context, "/chat"); // 👈 go to Chat page
+            },
+            child: const Icon(
+              Icons.chat_bubble_outline_rounded,
+              color: Colors.white,
+              size: 26,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildNavItem({
@@ -126,11 +151,10 @@ class _NavBarState extends State<NavBar> with TickerProviderStateMixin {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        
         curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         decoration: BoxDecoration(
-          color: isActive 
+          color: isActive
               ? const Color(0xFF6366F1).withOpacity(0.4)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
@@ -144,7 +168,7 @@ class _NavBarState extends State<NavBar> with TickerProviderStateMixin {
               size: isActive ? 24 : 22,
             ),
             if (isActive) const SizedBox(width: 6),
-            if (isActive) 
+            if (isActive)
               Text(
                 label,
                 style: const TextStyle(

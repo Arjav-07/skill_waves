@@ -38,30 +38,74 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           _section('Account'),
           const SizedBox(height: 12),
-          _cardItem(icon: Icons.person, title: 'Profile', subtitle: 'Update your profile information', onTap: () {}),
+          _cardItem(
+            icon: Icons.person,
+            title: 'Profile',
+            subtitle: 'Update your profile information',
+            onTap: () => Navigator.pushNamed(context, MyRoutes.updateProfileRoute),
+
+          ),
           _cardItem(
             icon: Icons.lock,
             title: 'Change Password',
             subtitle: 'Update your account password',
-            onTap: () => Navigator.pushNamed(context, MyRoutes.forgotPasswordRoute),
+            onTap: () => Navigator.pushNamed(
+              context,
+              MyRoutes.forgotPasswordRoute,
+            ),
           ),
           const SizedBox(height: 24),
           _section('Preferences'),
           const SizedBox(height: 12),
-          _switchItem(icon: Icons.notifications, title: 'Notifications', value: _notifications, onChanged: (v) => setState(() => _notifications = v)),
-          _switchItem(icon: Icons.dark_mode, title: 'Dark Mode', value: _darkMode, onChanged: (v) => setState(() => _darkMode = v)),
-          _switchItem(icon: Icons.location_on, title: 'Location Services', value: _location, onChanged: (v) => setState(() => _location = v)),
+          _switchItem(
+            icon: Icons.notifications,
+            title: 'Notifications',
+            value: _notifications,
+            onChanged: (v) => setState(() => _notifications = v),
+          ),
+          _switchItem(
+            icon: Icons.dark_mode,
+            title: 'Dark Mode',
+            value: _darkMode,
+            onChanged: (v) => setState(() => _darkMode = v),
+          ),
+          _switchItem(
+            icon: Icons.location_on,
+            title: 'Location Services',
+            value: _location,
+            onChanged: (v) => setState(() => _location = v),
+          ),
           const SizedBox(height: 24),
           _section('More'),
           const SizedBox(height: 12),
-          _cardItem(icon: Icons.help_outline, title: 'Help & Support', subtitle: 'Get assistance and FAQs', onTap: () {}),
-          _cardItem(icon: Icons.logout, title: 'Logout', subtitle: 'Sign out of your account', onTap: _logout),
+          _cardItem(
+            icon: Icons.help_outline,
+            title: 'Help & Support',
+            subtitle: 'Get assistance and FAQs',
+            onTap: () =>
+    Navigator.pushNamed(context, MyRoutes.helpSupportRoute),
+
+
+          ),
+          _cardItem(
+            icon: Icons.logout,
+            title: 'Logout',
+            subtitle: 'Sign out of your account',
+            onTap: _logout,
+          ),
         ]),
       ),
     );
   }
 
-  Widget _section(String title) => Text(title, style: const TextStyle(color: Colors.white70, fontSize: 18, fontWeight: FontWeight.bold));
+  Widget _section(String title) => Text(
+        title,
+        style: const TextStyle(
+          color: Colors.white70,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      );
 
   Widget _cardItem({
     required IconData icon,
@@ -84,13 +128,30 @@ class _SettingsPageState extends State<SettingsPage> {
             Icon(icon, color: Colors.white70),
             const SizedBox(width: 16),
             Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(title, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 4),
-                Text(subtitle, style: const TextStyle(color: Colors.white54, fontSize: 14)),
-              ]),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                      color: Colors.white54,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const Icon(Icons.arrow_forward_ios, color: Colors.white38, size: 16),
+            const Icon(Icons.arrow_forward_ios,
+                color: Colors.white38, size: 16),
           ],
         ),
       ),
@@ -115,7 +176,16 @@ class _SettingsPageState extends State<SettingsPage> {
         children: [
           Icon(icon, color: Colors.white70),
           const SizedBox(width: 16),
-          Expanded(child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold))),
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
           Switch(
             value: value,
             onChanged: onChanged,

@@ -59,6 +59,19 @@ class _SignupPageState extends State<SignupPage> {
       initialDate: DateTime(2000),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: Color(0xFF6366F1),
+              onPrimary: Colors.white,
+              surface: Color(0xFF1E293B),
+              onSurface: Colors.white,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) {
       dobController.text = DateFormat('dd/MM/yyyy').format(picked);
@@ -78,34 +91,52 @@ class _SignupPageState extends State<SignupPage> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
+        color: const Color(0xFF1E293B), // Dark slate background matching login
+        border: Border.all(color: const Color(0xFF374151), width: 1),
         borderRadius: BorderRadius.circular(12),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
-      ),
-      child: Row(
-        children: [
-          if (icon != null) ...[
-            const SizedBox(width: 12),
-            Icon(icon, color: Colors.black87),
-            const SizedBox(width: 8),
-          ],
-          Expanded(
-            child: TextField(
-              controller: controller,
-              obscureText: obscureText,
-              readOnly: readOnly,
-              onTap: onTap,
-              keyboardType: keyboardType,
-              decoration: InputDecoration(
-                labelText: label,
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.fromLTRB(8, 18, 8, 18),
-              ),
-            ),
-          ),
-          if (trailing != null) trailing,
-          const SizedBox(width: 12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          )
         ],
+      ),
+      child: TextField(
+        controller: controller,
+        obscureText: obscureText,
+        readOnly: readOnly,
+        onTap: onTap,
+        keyboardType: keyboardType,
+        style: const TextStyle(color: Colors.white, fontSize: 16),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(color: Colors.white60, fontSize: 16),
+          floatingLabelStyle: const TextStyle(color: Color(0xFF6366F1), fontSize: 14),
+          prefixIcon: icon != null 
+              ? Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 12),
+                  child: Icon(icon, color: Colors.white70, size: 20),
+                )
+              : null,
+          suffixIcon: trailing,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF6366F1), width: 2),
+          ),
+          filled: true,
+          fillColor: Colors.transparent,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+          hintStyle: const TextStyle(color: Colors.white38),
+        ),
       ),
     );
   }
@@ -113,101 +144,105 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF00BFA6), Color(0xFF1DE9B6)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.waves, size: 80, color: Colors.white),
-                const SizedBox(height: 16),
-                const Text(
-                  "Create Account",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-                const SizedBox(height: 40),
+      backgroundColor: const Color(0xFF0F172A), // Same dark background as login
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 40),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.waves, size: 80, color: Colors.white),
+              const SizedBox(height: 16),
+              const Text(
+                "Create Account",
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+              ),
+              const SizedBox(height: 40),
 
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildTextField(
-                        controller: firstNameController,
-                        label: "First Name",
-                        icon: Icons.person_outline,
-                      ),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildTextField(
+                      controller: firstNameController,
+                      label: "First Name",
+                      icon: Icons.person_outline,
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _buildTextField(
-                        controller: lastNameController,
-                        label: "Last Name",
-                        icon: Icons.person_outline,
-                      ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _buildTextField(
+                      controller: lastNameController,
+                      label: "Last Name",
+                      icon: Icons.person_outline,
                     ),
-                  ],
-                ),
-                const SizedBox(height: 16),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
 
-                _buildTextField(
-                  controller: dobController,
-                  label: "Date of Birth",
-                  icon: Icons.calendar_today_outlined,
-                  readOnly: true,
-                  onTap: () => _selectDate(context),
-                ),
-                const SizedBox(height: 16),
+              _buildTextField(
+                controller: dobController,
+                label: "Date of Birth",
+                icon: Icons.calendar_today_outlined,
+                readOnly: true,
+                onTap: () => _selectDate(context),
+              ),
+              const SizedBox(height: 20),
 
-                _buildTextField(
-                  controller: emailController,
-                  label: "Email",
-                  icon: Icons.email_outlined,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 16),
+              _buildTextField(
+                controller: emailController,
+                label: "Email",
+                icon: Icons.email_outlined,
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 20),
 
-                _buildTextField(
-                  controller: passwordController,
-                  label: "Password",
-                  icon: Icons.lock_outline,
-                  obscureText: obscure,
-                  trailing: IconButton(
-                    onPressed: () => setState(() => obscure = !obscure),
-                    icon: Icon(obscure ? Icons.visibility_off : Icons.visibility),
+              _buildTextField(
+                controller: passwordController,
+                label: "Password",
+                icon: Icons.lock_outline,
+                obscureText: obscure,
+                trailing: IconButton(
+                  onPressed: () => setState(() => obscure = !obscure),
+                  icon: Icon(
+                    obscure ? Icons.visibility_off : Icons.visibility,
+                    color: Colors.white70,
                   ),
                 ),
-                const SizedBox(height: 24),
+              ),
+              const SizedBox(height: 28),
 
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: isLoading ? null : _signup,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.teal,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: isLoading
-                        ? const CircularProgressIndicator(color: Colors.teal)
-                        : const Text("Sign Up", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+                child: ElevatedButton(
+                  onPressed: isLoading ? null : _signup,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6366F1), // Same purple as login
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
+                  child: isLoading
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        )
+                      : const Text(
+                          "Sign Up",
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
                 ),
-                const SizedBox(height: 16),
+              ),
+              const SizedBox(height: 18),
 
-                TextButton(
-                  onPressed: () => Navigator.pushNamed(context, MyRoutes.loginRoute),
-                  child: const Text("Already have an account? Login", style: TextStyle(color: Colors.white70)),
+              TextButton(
+                onPressed: () => Navigator.pushNamed(context, MyRoutes.loginRoute),
+                child: const Text(
+                  "Already have an account? Login",
+                  style: TextStyle(color: Colors.white70),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

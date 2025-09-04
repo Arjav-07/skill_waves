@@ -15,17 +15,23 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   void _resetPassword() async {
     if (emailController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please enter your email")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter your email")),
+      );
       return;
     }
 
     try {
       setState(() => isLoading = true);
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: emailController.text.trim());
+      await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: emailController.text.trim(),
+      );
       if (!mounted) return;
       setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Password reset email sent! Check your inbox.")),
+        const SnackBar(
+          content: Text("Password reset email sent! Check your inbox."),
+        ),
       );
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
@@ -45,15 +51,40 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.9),
         borderRadius: BorderRadius.circular(12),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          )
+        ],
       ),
       child: TextField(
         controller: controller,
+        style: const TextStyle(color: Colors.black87, fontSize: 16),
         decoration: InputDecoration(
-          prefixIcon: icon != null ? Icon(icon) : null,
           labelText: label,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.fromLTRB(20, 20, 16, 20),
+          labelStyle: const TextStyle(color: Colors.black54, fontSize: 16),
+          floatingLabelStyle: const TextStyle(color: Color(0xFF4F46E5), fontSize: 14),
+          prefixIcon: Padding(
+            padding: const EdgeInsets.only(left: 16, right: 12),
+            child: Icon(icon, color: Colors.black54, size: 20),
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF4F46E5), width: 2),
+          ),
+          filled: true,
+          fillColor: Colors.transparent,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
         ),
       ),
     );
@@ -80,7 +111,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 const SizedBox(height: 16),
                 const Text(
                   "Forgot Password",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 const Text(
@@ -90,29 +125,52 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 ),
                 const SizedBox(height: 30),
 
-                _buildTextField(controller: emailController, label: "Email", icon: Icons.email_outlined),
+                _buildTextField(
+                  controller: emailController,
+                  label: "Email",
+                  icon: Icons.email_outlined,
+                ),
                 const SizedBox(height: 24),
 
                 SizedBox(
                   width: double.infinity,
-                  height: 50,
+                  height: 55,
                   child: ElevatedButton(
                     onPressed: isLoading ? null : _resetPassword,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color(0xFF4F46E5),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: isLoading
-                        ? const CircularProgressIndicator(color: Color(0xFF4F46E5))
-                        : const Text("Send Reset Link", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Color(0xFF4F46E5),
+                            ),
+                          )
+                        : const Text(
+                            "Send Reset Link",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ),
                 ),
                 const SizedBox(height: 16),
 
                 TextButton(
-                  onPressed: () => Navigator.pushNamed(context, MyRoutes.loginRoute),
-                  child: const Text("Back to Login", style: TextStyle(color: Colors.white70)),
+                  onPressed: () =>
+                      Navigator.pushNamed(context, MyRoutes.loginRoute),
+                  child: const Text(
+                    "Back to Login",
+                    style: TextStyle(color: Colors.white70),
+                  ),
                 ),
               ],
             ),

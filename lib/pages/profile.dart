@@ -58,7 +58,8 @@ class ProfilePage extends StatelessWidget {
                     onTap: () => Navigator.pushNamed(context, MyRoutes.settingsRoute),
                   ),
                   _profileItem(icon: Icons.history, title: 'Activity', subtitle: 'View your recent activities', onTap: () {}),
-                  _profileItem(icon: Icons.help_outline, title: 'Help & Support', subtitle: 'Get assistance', onTap: () {}),
+                  _profileItem(icon: Icons.help_outline, title: 'Help & Support', subtitle: 'Get assistance', onTap: () =>
+    Navigator.pushNamed(context, MyRoutes.helpSupportRoute),),
                   _profileItem(icon: Icons.logout, title: 'Logout', subtitle: 'Sign out of your account', onTap: () => _logout(context)),
                 ],
               ),

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:skill_waves/models/chatbot.dart';
 import 'package:skill_waves/pages/internship.dart';
 import 'package:skill_waves/pages/profile.dart';
 import 'package:skill_waves/pages/skills.dart';
-
+// ✅ import chatbot page
 import 'package:skill_waves/widget/app_drawer.dart';
 import 'package:skill_waves/widget/nav_bar.dart';
 
@@ -29,24 +30,34 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    _fadeController = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this);
-    _slideController = AnimationController(duration: const Duration(milliseconds: 1200), vsync: this);
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+    _slideController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
     );
-    _slideAnimation = Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero).animate(
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.5),
+      end: Offset.zero,
+    ).animate(
       CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
     );
 
     _fadeController.forward();
     _slideController.forward();
 
+    // ✅ Added ChatBotPage into bottom nav flow
     _pages = [
       _buildHomeContent(),
       const InternshipPage(),
       const SkillPage(),
-      const Center(child: Text('Chat Page', style: TextStyle(color: Colors.white, fontSize: 20))),
+      const ChatBotPage(),
       const ProfilePage(),
     ];
   }
@@ -79,16 +90,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               child: _pages[_currentIndex],
             ),
           ),
+          // ✅ Always display NavBar
           Positioned(
             bottom: 20,
             left: 20,
             right: 20,
-            child: NavBar(currentIndex: _currentIndex, onItemTapped: _onNavItemTapped),
+            child: NavBar(
+              currentIndex: _currentIndex,
+              onItemTapped: _onNavItemTapped,
+            ),
           ),
         ],
       ),
     );
   }
+
+  // ------------------------
+  // HOME SECTIONS
+  // ------------------------
 
   Widget _buildHomeContent() {
     return SingleChildScrollView(
@@ -122,13 +141,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)]),
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                      ),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(Icons.waves, color: Colors.white, size: 24),
+                    child: const Icon(Icons.waves,
+                        color: Colors.white, size: 24),
                   ),
                   const SizedBox(width: 12),
-                  const Text('SkillWaves', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                  const Text(
+                    'SkillWaves',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ],
               ),
             ),
@@ -143,7 +171,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: const Color(0xFF2D2D42)),
               ),
-              child: const Icon(Icons.notifications_outlined, color: Colors.white70, size: 20),
+              child: const Icon(Icons.notifications_outlined,
+                  color: Colors.white70, size: 20),
             ),
           ),
         ],
@@ -157,13 +186,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          FadeTransition(opacity: _fadeAnimation, child: const Text('Welcome back! 👋', style: TextStyle(color: Colors.white70, fontSize: 16))),
+          FadeTransition(
+            opacity: _fadeAnimation,
+            child: const Text(
+              'Welcome back! 👋',
+              style: TextStyle(color: Colors.white70, fontSize: 16),
+            ),
+          ),
           const SizedBox(height: 8),
           SlideTransition(
             position: _slideAnimation,
             child: const Text(
               'Ready to ride the next\nwave of opportunities?',
-              style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold, height: 1.2),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  height: 1.2),
             ),
           ),
           const SizedBox(height: 24),
@@ -184,7 +223,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               subtitle: 'Discover amazing opportunities',
               description: '500+ active internships from top companies',
               icon: Icons.work_outline,
-              gradient: const LinearGradient(colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               onTap: () => _onNavItemTapped(1),
             ),
           ),
@@ -196,8 +239,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               subtitle: 'Level up your expertise',
               description: '200+ courses from industry experts',
               icon: Icons.trending_up,
-              gradient: const LinearGradient(colors: [Color(0xFF10B981), Color(0xFF059669)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF10B981), Color(0xFF059669)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               onTap: () => _onNavItemTapped(2),
+            ),
+          ),
+          const SizedBox(height: 16),
+          SlideTransition(
+            position: _slideAnimation,
+            child: _featureCard(
+              title: 'AI Chatbot',
+              subtitle: 'Guidance at your fingertips',
+              description: 'Ask about skills, careers & more',
+              icon: Icons.chat_bubble_outline,
+              gradient: const LinearGradient(
+                colors: [Color(0xFFEC4899), Color(0xFFF43F5E)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              onTap: () => _onNavItemTapped(3), // ✅ Chatbot
             ),
           ),
         ],
@@ -221,7 +284,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         decoration: BoxDecoration(
           gradient: gradient,
           borderRadius: BorderRadius.circular(20),
-          boxShadow: [BoxShadow(color: (gradient as LinearGradient).colors.first.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 8))],
+          boxShadow: [
+            BoxShadow(
+              color: (gradient as LinearGradient).colors.first.withOpacity(0.3),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            )
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,17 +298,33 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(width: 48, height: 48, decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
-                    child: Icon(icon, color: Colors.white, size: 24)),
-                const Icon(Icons.arrow_forward_ios, color: Colors.white70, size: 16),
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 24),
+                ),
+                const Icon(Icons.arrow_forward_ios,
+                    color: Colors.white70, size: 16),
               ],
             ),
             const SizedBox(height: 16),
-            Text(title, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+            Text(title,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
-            Text(subtitle, style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 16)),
+            Text(subtitle,
+                style: TextStyle(
+                    color: Colors.white.withOpacity(0.8), fontSize: 16)),
             const SizedBox(height: 8),
-            Text(description, style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 14)),
+            Text(description,
+                style: TextStyle(
+                    color: Colors.white.withOpacity(0.7), fontSize: 14)),
           ],
         ),
       ),
@@ -279,8 +364,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           child: Icon(icon, color: const Color(0xFF6366F1), size: 24),
         ),
         const SizedBox(height: 8),
-        Text(value, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-        Text(label, style: const TextStyle(color: Colors.white54, fontSize: 12)),
+        Text(value,
+            style: const TextStyle(
+                color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+        Text(label,
+            style: const TextStyle(color: Colors.white54, fontSize: 12)),
       ],
     );
   }
@@ -291,9 +379,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Recent Updates', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+          Text('Recent Updates',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold)),
           SizedBox(height: 12),
-          Text('No recent updates available.', style: TextStyle(color: Colors.white54)),
+          Text('No recent updates available.',
+              style: TextStyle(color: Colors.white54)),
         ],
       ),
     );
