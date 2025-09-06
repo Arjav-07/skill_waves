@@ -3,8 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:skill_waves/models/chatbot.dart';
 import 'package:skill_waves/pages/internship.dart';
 import 'package:skill_waves/pages/profile.dart';
-import 'package:skill_waves/pages/skills.dart';
-// ✅ import chatbot page
+import 'package:skill_waves/pages/skills.dart';// Make sure this import is correct
 import 'package:skill_waves/widget/app_drawer.dart';
 import 'package:skill_waves/widget/nav_bar.dart';
 
@@ -52,12 +51,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _fadeController.forward();
     _slideController.forward();
 
-    // ✅ Added ChatBotPage into bottom nav flow
+    // Initialize pages
     _pages = [
       _buildHomeContent(),
       const InternshipPage(),
       const SkillPage(),
-      const ChatBotPage(),
+      ChatBotPage(isFullScreen: false), // Embedded chatbot
       const ProfilePage(),
     ];
   }
@@ -82,25 +81,30 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       key: _scaffoldKey,
       backgroundColor: const Color(0xFF0F0F23),
       drawer: const AppDrawer(),
-      body: Stack(
-        children: [
-          SafeArea(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 400),
-              child: _pages[_currentIndex],
+      body: SafeArea(
+        child: Stack(
+          children: [
+            // Main content area with padding for navbar
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16), // Space for nav bar
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 400),
+                child: _pages[_currentIndex],
+              ),
             ),
-          ),
-          // ✅ Always display NavBar
-          Positioned(
-            bottom: 20,
-            left: 20,
-            right: 20,
-            child: NavBar(
-              currentIndex: _currentIndex,
-              onItemTapped: _onNavItemTapped,
+            
+            // Navbar positioned at bottom
+            Positioned(
+              bottom: 16,
+              left: 16,
+              right: 16,
+              child: NavBar(
+                currentIndex: _currentIndex,
+                onItemTapped: _onNavItemTapped,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -111,7 +115,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Widget _buildHomeContent() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.only(bottom: 90),
+      padding: const EdgeInsets.only(bottom: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -260,7 +264,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              onTap: () => _onNavItemTapped(3), // ✅ Chatbot
+              onTap: () {
+                // Navigate to full-screen chatbot
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChatBotPage(isFullScreen: true),
+                  ),
+                );
+              },
             ),
           ),
         ],
